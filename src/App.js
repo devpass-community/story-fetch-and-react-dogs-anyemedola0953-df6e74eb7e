@@ -8,13 +8,38 @@ function App() {
   const [dogImages, setDogImages] = useState([]);
 
   useEffect(() => {
-    console.log()
+    const fetchBreeds = async () => {
+      try {
+        const response = await fetch('https://dog.ceo/api/breeds/list/all');
+        const data = await response.json();
+        const { message } = data;
+        setBreeds(Object.keys(message));
+      } catch (error) {
+        console.error('Error fetching breeds:', error);
+      }
+    };
+
+    fetchBreeds();
   }, []);
 
-  const searchByBreed = () => {
-    // TODO
+  const searchByBreed = async () => {
+    setIsLoading(true);
+    setDogImages([]);
+  
+    try {
+      const response = await fetch(
+        `https://dog.ceo/api/breed/${selectedBreed}/images/random/10`
+      );
+      const data = await response.json();
+      const { message } = data;
+      setDogImages(message);
+    } catch (error) {
+      console.error('Error fetching dog images:', error);
+    } finally {
+      setIsLoading(false);
+    }
   };
-
+  
   return (
     <div className="d-flex justify-content-center flex-column text-center">
       <header>
