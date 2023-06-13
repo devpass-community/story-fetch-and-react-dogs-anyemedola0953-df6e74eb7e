@@ -8,11 +8,30 @@ function App() {
   const [dogImages, setDogImages] = useState([]);
 
   useEffect(() => {
-    // TODO
+    fetch('https://dog.ceo/api/breeds/list/all')
+      .then(response => response.json())
+      .then(data => {
+        const { message } = data;
+        setBreeds(Object.keys(message));
+      })
+      .catch(error => {
+        console.error('Error fetching dog breeds:', error);
+      });
   }, []);
 
   const searchByBreed = () => {
-    // TODO
+    setIsLoading(true);
+    fetch(`https://dog.ceo/api/breed/${selectedBreed}/images`)
+      .then(response => response.json())
+      .then(data => {
+        const { message } = data;
+        setDogImages(message);
+        setIsLoading(false);
+      })
+      .catch(error => {
+        console.error('Error fetching dog images:', error);
+        setIsLoading(false);
+      });
   };
 
   return (
