@@ -8,7 +8,7 @@ function App() {
   const [dogImages, setDogImages] = useState([]);
 
   useEffect(() => {
-    // TODO
+    console.log()
   }, []);
 
   const searchByBreed = () => {
