@@ -8,7 +8,18 @@ function App() {
   const [dogImages, setDogImages] = useState([]);
 
   useEffect(() => {
-    // TODO
+    const fetchBreeds = async () => {
+      try {
+        const response = await fetch('https://dog.ceo/api/breeds/list/all');
+        const data = await response.json();
+        const { message } = data;
+        setBreeds(Object.keys(message));
+      } catch (error) {
+        console.error('Error fetching breeds:', error);
+      }
+    };
+
+    fetchBreeds();
   }, []);
 
   const searchByBreed = () => {
