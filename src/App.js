@@ -8,96 +8,32 @@ function App() {
   const [dogImages, setDogImages] = useState([]);
 
   useEffect(() => {
-    const fetchBreeds = async () => {
-      try {
-        const response = await fetch('https://dog.ceo/api/breeds/list/all');
-        const data = await response.json();
+    fetch('https://dog.ceo/api/breeds/list/all')
+      .then(response => response.json())
+      .then(data => {
         const { message } = data;
         setBreeds(Object.keys(message));
-      } catch (error) {
-        console.error('Error fetching breeds:', error);
-      }
-    };
-
-    fetchBreeds();
+      })
+      .catch(error => {
+        console.error('Error fetching dog breeds:', error);
+      });
   }, []);
 
-  const searchByBreed = async () => {
+  const searchByBreed = () => {
     setIsLoading(true);
-    setDogImages([]);
-  
-    try {
-      const response = await fetch(
-        `https://dog.ceo/api/breed/${selectedBreed}/images/random/10`
-      );
-      const data = await response.json();
-      const { message } = data;
-      setDogImages(message);
-    } catch (error) {
-      console.error('Error fetching dog images:', error);
-    } finally {
-      setIsLoading(false);
-    }
+    fetch(`https://dog.ceo/api/breed/${selectedBreed}/images`)
+      .then(response => response.json())
+      .then(data => {
+        const { message } = data;
+        setDogImages(message);
+        setIsLoading(false);
+      })
+      .catch(error => {
+        console.error('Error fetching dog images:', error);
+        setIsLoading(false);
+      });
   };
 
-  const renderBreedsOptions = () => {
-    return (
-      <>
-        <option value="" disabled>
-          Select a breed
-        </option>
-        {breeds.map((breed) => (
-          <option key={breed} value={breed}>
-            {breed}
-          </option>
-        ))}
-      </>
-    );
-  };
-
-  const renderResultsCount = () => {
-    if (dogImages.length > 0 && !isLoading) {
-      return (
-        <div className="px-5 mx-5 text-end" data-testid="results-count">
-          <p className="fs-5">{dogImages.length} results</p>
-        </div>
-      );
-    }
-    return null;
-  };
-
-  const renderDogImages = () => {
-    if (dogImages.length === 0 && !isLoading) {
-      return (
-        <img
-          src={placeholderImg}
-          className="mx-auto d-block mt-4 w-50"
-          alt=""
-        />
-      );
-    }
-    if (isLoading) {
-      return (
-        <div className="d-flex align-items-center ">
-          <p className="h1 me-2">Loading</p>
-          <div
-            className="spinner-border ms-auto text-primary fs-3"
-            role="status"
-            aria-hidden="true"
-          ></div>
-        </div>
-      );
-    }
-    return dogImages.map((imgSrc, index) => (
-      <img
-        key={`${index}-${selectedBreed}`}
-        src={imgSrc}
-        className="img-thumbnail w-25"
-        alt={`${selectedBreed} ${index + 1} of ${dogImages.length}`}
-      />
-    ));
-  };
-  
   return (
     <div className="d-flex justify-content-center flex-column text-center">
       <header>
